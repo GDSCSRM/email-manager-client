@@ -80,172 +80,148 @@ export default function Index() {
   } = useLoaderData<LoaderData>();
 
   return (
-    <>
-      <nav className="flex items-center justify-between px-10 py-7">
-        <p className="flex items-center gap-3 text-xl font-bold">
-          <Mail width={32} height={32} className="text-primary" />
-          Email Manager
-        </p>
-        <div className="flex gap-3">
-          <Button className="font-bold">
-            <Link to="/add">Add emails</Link>
-          </Button>
-          <Form method="POST" action="/sign-out">
-            <Button type="submit" variant="outline" className="font-bold">
-              Logout
+    <main className="flex flex-col gap-7 px-10">
+      <Section title="Stats">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              Emails <Mail className="text-muted-foreground" />
+            </CardTitle>
+            <CardDescription>Total number of emails available</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold">{emailsCount}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              Uni Emails <GraduationCap className="text-muted-foreground" />
+            </CardTitle>
+            <CardDescription>
+              Total number of SRM emails available
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold">{uniEmailsCount}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              Emails with Name <User className="text-muted-foreground" />
+            </CardTitle>
+            <CardDescription>Total number of emails with name</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold">{emailsWithName}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              Emails with Registration Number{" "}
+              <Hash className="text-muted-foreground" />
+            </CardTitle>
+            <CardDescription>
+              Total number of emails with registration number
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold">{emailsWithRegistrationNumber}</p>
+          </CardContent>
+        </Card>
+      </Section>
+      <Section title="Manage">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              Emails
+              <Mail className="text-muted-foreground" />
+            </CardTitle>
+            <CardDescription>Add or remove emails</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              className="flex items-center gap-2 font-semibold w-fit"
+              asChild
+            >
+              <Link to="/manage">
+                <Pencil width={20} height={20} /> Manage
+              </Link>
             </Button>
-          </Form>
-        </div>
-      </nav>
-      <main className="flex flex-col gap-7 px-10">
-        <Section title="Stats">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                Emails <Mail className="text-muted-foreground" />
-              </CardTitle>
-              <CardDescription>
-                Total number of emails available
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-4xl font-bold">{emailsCount}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                Uni Emails <GraduationCap className="text-muted-foreground" />
-              </CardTitle>
-              <CardDescription>
-                Total number of SRM emails available
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-4xl font-bold">{uniEmailsCount}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                Emails with Name <User className="text-muted-foreground" />
-              </CardTitle>
-              <CardDescription>
-                Total number of emails with name
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-4xl font-bold">{emailsWithName}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                Emails with Registration Number{" "}
-                <Hash className="text-muted-foreground" />
-              </CardTitle>
-              <CardDescription>
-                Total number of emails with registration number
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-4xl font-bold">
-                {emailsWithRegistrationNumber}
-              </p>
-            </CardContent>
-          </Card>
-        </Section>
-        <Section title="Manage">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                Emails
-                <Mail className="text-muted-foreground" />
-              </CardTitle>
-              <CardDescription>Add or remove emails</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button
-                className="flex items-center gap-2 font-semibold w-fit"
-                asChild
-              >
-                <Link to="/manage">
-                  <Pencil width={20} height={20} /> Manage
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                Users
-                <User className="text-muted-foreground" />
-              </CardTitle>
-              <CardDescription>Manage Users</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button
-                className="flex items-center gap-2 font-semibold w-fit"
-                asChild
-              >
-                <Link to="/admin">
-                  <Settings width={20} height={20} /> Manage
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </Section>
-        <Section title="Download">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                All Emails <Mail className="text-muted-foreground" />
-              </CardTitle>
-              <CardDescription>Download all emails as CSV</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="flex items-center gap-2 font-semibold">
-                <Download width={20} height={20} /> Download
-              </Button>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                Emails with Name
-                <Mail className="text-muted-foreground" />
-              </CardTitle>
-              <CardDescription>
-                Download all emails with name as CSV
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="flex items-center gap-2 font-semibold">
-                <Download width={20} height={20} /> Download
-              </Button>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                Advanced
-                <Filter className="text-muted-foreground" />
-              </CardTitle>
-              <CardDescription>Download emails with filter</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button
-                className="flex items-center gap-2 font-semibold w-fit"
-                asChild
-              >
-                <Link to="/manage">
-                  <Filter width={20} height={20} /> Download
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </Section>
-      </main>
-    </>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              Users
+              <User className="text-muted-foreground" />
+            </CardTitle>
+            <CardDescription>Manage Users</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              className="flex items-center gap-2 font-semibold w-fit"
+              asChild
+            >
+              <Link to="/admin">
+                <Settings width={20} height={20} /> Manage
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </Section>
+      <Section title="Download">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              All Emails <Mail className="text-muted-foreground" />
+            </CardTitle>
+            <CardDescription>Download all emails as CSV</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button className="flex items-center gap-2 font-semibold">
+              <Download width={20} height={20} /> Download
+            </Button>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              Emails with Name
+              <Mail className="text-muted-foreground" />
+            </CardTitle>
+            <CardDescription>
+              Download all emails with name as CSV
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button className="flex items-center gap-2 font-semibold">
+              <Download width={20} height={20} /> Download
+            </Button>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              Advanced
+              <Filter className="text-muted-foreground" />
+            </CardTitle>
+            <CardDescription>Download emails with filter</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              className="flex items-center gap-2 font-semibold w-fit"
+              asChild
+            >
+              <Link to="/manage">
+                <Filter width={20} height={20} /> Download
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </Section>
+    </main>
   );
 }

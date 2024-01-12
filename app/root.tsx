@@ -7,12 +7,30 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
+  useLocation,
 } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
+import type { LinksFunction, LoaderFunction } from "@remix-run/node";
+import Navbar from "~/components/navbar";
+import { json } from "@remix-run/node";
+import { getUserId } from "~/utils/session.server";
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
+type LoaderData = {
+  isLoggedIn: boolean;
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const isLoggedIn = !!(await getUserId(request));
+
+  return json({ isLoggedIn });
+};
+
 export default function App() {
+  const { isLoggedIn } = useLoaderData<LoaderData>();
+  const { pathname } = useLocation();
+
   return (
     <html lang="en">
       <head>
@@ -23,6 +41,7 @@ export default function App() {
       </head>
       <body>
         <Toaster />
+        <Navbar isLoggedIn={isLoggedIn} path={pathname} />
         <Outlet />
         <ScrollRestoration />
         <Scripts />

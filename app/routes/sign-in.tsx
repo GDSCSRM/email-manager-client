@@ -76,7 +76,7 @@ export default function SignIn() {
   return (
     <Form
       method="POST"
-      className="flex flex-col h-screen gap-5 grow justify-center w-80 mx-auto"
+      className="flex flex-col h-[75vh] gap-5 grow justify-center w-80 mx-auto"
     >
       <h1 className="text-3xl font-bold">Welcome Back!</h1>
       <div className="flex flex-col gap-2">
