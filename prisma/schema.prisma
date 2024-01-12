@@ -19,7 +19,9 @@ model User {
 }
 
 model Email {
-  id        String   @id @default(uuid()) @map("_id")
-  email     String   @unique
-  createdAt DateTime @default(now())
+  id                 String   @id @default(uuid()) @map("_id")
+  email              String   @unique
+  createdAt          DateTime @default(now())
+  name               String?
+  registrationNumber String?
 }

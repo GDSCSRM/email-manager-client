@@ -6,7 +6,7 @@ import { validateSignIn } from "~/utils/validation.server";
 import { cn } from "~/lib/utils";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
-import { useToast } from "~/components/ui/use-toast"
+import { useToast } from "~/components/ui/use-toast";
 import { useEffect } from "react";
 import type {
   LoaderFunction,
@@ -61,11 +61,15 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function SignIn() {
   const actionData = useActionData<ActionData>();
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   useEffect(() => {
     if (actionData?.error) {
-      toast({ title: "Error", description: actionData.error, variant: "destructive" });
+      toast({
+        title: "Error",
+        description: actionData.error,
+        variant: "destructive",
+      });
     }
   }, [actionData]);
 
