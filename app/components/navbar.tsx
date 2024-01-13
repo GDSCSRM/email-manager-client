@@ -23,10 +23,10 @@ const Navbar = ({ path, isLoggedIn }: NavbarProps) => {
 
   return (
     <nav className="flex items-center justify-between px-10 py-7">
-      <p className="flex items-center gap-3 text-xl font-bold">
+      <Link to="/" className="flex items-center gap-3 text-xl font-bold">
         <Mail width={32} height={32} className="text-primary" />
         Email Manager
-      </p>
+      </Link>
       {isLoggedIn && (
         <div className="flex gap-3">
           <Button className="font-bold" asChild>

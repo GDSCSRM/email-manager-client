@@ -7,3 +7,17 @@ export function convertToCSV(arr: Array<any>) {
     })
     .join("\n");
 }
+
+export function convertToObject(arr: Array<string>) {
+  const keys = arr[0].split(",");
+  const values = arr.slice(1);
+
+  return values.map((value) => {
+    const obj: Record<string, any> = {};
+
+    keys.forEach((key, i) => {
+      obj[key] = value.split(",")[i];
+    });
+    return obj;
+  });
+}
