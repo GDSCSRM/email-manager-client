@@ -18,10 +18,23 @@ import {
   Settings,
   User,
 } from "lucide-react";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import type { LoaderFunction, MetaFunction } from "@remix-run/node";
 import Section from "~/components/section";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
+import { Label } from "~/components/ui/label";
+import { Input } from "~/components/ui/input";
+import { cn } from "~/lib/utils";
+import { Checkbox } from "~/components/ui/checkbox";
+import { ChangeEvent, useState } from "react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -78,6 +91,12 @@ export default function Index() {
     emailsWithName,
     emailsWithRegistrationNumber,
   } = useLoaderData<LoaderData>();
+
+  const [filters, setFilters] = useState({
+    uni: false,
+    name: false,
+    regNo: false,
+  });
 
   return (
     <main className="flex flex-col gap-7 px-10">
@@ -225,9 +244,89 @@ export default function Index() {
               className="flex items-center gap-2 font-semibold w-fit"
               asChild
             >
-              <Link to="/manage">
-                <Filter width={20} height={20} /> Download
-              </Link>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="flex items-center gap-2 font-semibold w-fit">
+                    <Filter width={20} height={20} /> Download
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Advanced download</DialogTitle>
+                    <DialogDescription>
+                      Download emails with filter
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-3">
+                        <Checkbox
+                          id="uni"
+                          checked={filters.uni}
+                          onCheckedChange={() =>
+                            setFilters((prevState) => {
+                              return {
+                                ...prevState,
+                                uni: !prevState.uni,
+                              };
+                            })
+                          }
+                        />
+                        <Label htmlFor="uni">Only SRM Emails</Label>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Checkbox
+                          id="name"
+                          checked={filters.name}
+                          onCheckedChange={() =>
+                            setFilters((prevState) => {
+                              return {
+                                ...prevState,
+                                name: !prevState.name,
+                              };
+                            })
+                          }
+                        />
+                        <Label htmlFor="name">Include Name</Label>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Checkbox
+                          id="regNo"
+                          checked={filters.regNo}
+                          onCheckedChange={() =>
+                            setFilters((prevState) => {
+                              return {
+                                ...prevState,
+                                regNo: !prevState.regNo,
+                              };
+                            })
+                          }
+                        />
+                        <Label htmlFor="regNo">
+                          Include Registration Number
+                        </Label>
+                      </div>
+                    </div>
+                    <Button asChild className="font-semibold w-fit self-end">
+                      <a
+                        href={`/api/download/emails-with-filters?filters=${Object.entries(
+                          filters,
+                        )
+                          .map(([key, value]) => {
+                            if (value) {
+                              return key;
+                            }
+                          })
+                          .filter(Boolean)
+                          .join(",")}`}
+                        download
+                      >
+                        Download
+                      </a>
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </Button>
           </CardContent>
         </Card>
