@@ -18,7 +18,7 @@ import {
   Settings,
   User,
 } from "lucide-react";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import type { LoaderFunction, MetaFunction } from "@remix-run/node";
 import Section from "~/components/section";
@@ -181,8 +181,13 @@ export default function Index() {
             <CardDescription>Download all emails as CSV</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="flex items-center gap-2 font-semibold">
-              <Download width={20} height={20} /> Download
+            <Button
+              asChild
+              className="flex items-center gap-2 font-semibold w-fit"
+            >
+              <a href="/api/download/emails" download>
+                <Download width={20} height={20} /> Download
+              </a>
             </Button>
           </CardContent>
         </Card>
@@ -197,8 +202,13 @@ export default function Index() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="flex items-center gap-2 font-semibold">
-              <Download width={20} height={20} /> Download
+            <Button
+              asChild
+              className="flex items-center gap-2 font-semibold w-fit"
+            >
+              <a href="/api/download/emails-with-name" download>
+                <Download width={20} height={20} /> Download
+              </a>
             </Button>
           </CardContent>
         </Card>
