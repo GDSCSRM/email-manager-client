@@ -151,24 +151,22 @@ export const action: ActionFunction = async ({ request }) => {
         .filter(Boolean) as Email[];
 
       try {
-        await db.$transaction(
-          parsedEntries.map(({ email, name, registrationNumber }) =>
-            db.email.upsert({
-              where: {
-                email,
-              },
-              create: {
-                email,
-                name,
-                registrationNumber,
-              },
-              update: {
-                name,
-                registrationNumber,
-              },
-            }),
-          ),
-        );
+        for (const {email, name, registrationNumber} of parsedEntries) {
+          const data = await db.email.upsert({
+            where: {
+              email,
+            },
+            create: {
+              email,
+              name,
+              registrationNumber,
+            },
+            update: {
+              name,
+              registrationNumber,
+            },
+          });
+        }
       } catch (error) {
         return json(
           { error: "Server error, please try again" },
