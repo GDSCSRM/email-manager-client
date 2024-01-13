@@ -66,7 +66,7 @@ export default function SignIn() {
   useEffect(() => {
     if (actionData?.error) {
       toast({
-        title: "Error",
+        title: "Something went wrong",
         description: actionData.error,
         variant: "destructive",
       });

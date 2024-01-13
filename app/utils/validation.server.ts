@@ -1,4 +1,13 @@
-import { minLength, object, parse, string, ValiError } from "valibot";
+import {
+  email,
+  minLength,
+  object,
+  optional,
+  parse,
+  startsWith,
+  string,
+  ValiError,
+} from "valibot";
 import type { BaseSchema, Input } from "valibot";
 
 const SignInSchema = object({
@@ -8,6 +17,18 @@ const SignInSchema = object({
   password: string("Password is required", [
     minLength(3, "Password is required"),
   ]),
+});
+
+const AddEntrySchema = object({
+  email: string("Email is required", [
+    email("Please enter a valid email address"),
+  ]),
+  name: optional(string("Name must be a string")),
+  registrationNumber: optional(
+    string("Registration number must be a string", [
+      startsWith("RA", "Enter a valid registration number"),
+    ]),
+  ),
 });
 
 type ValidatedForm<Schema extends BaseSchema> =
@@ -42,3 +63,4 @@ const validateForm =
   };
 
 export const validateSignIn = validateForm(SignInSchema);
+export const validateAddEntry = validateForm(AddEntrySchema);
