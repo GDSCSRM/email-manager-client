@@ -151,7 +151,7 @@ export const action: ActionFunction = async ({ request }) => {
         .filter(Boolean) as Email[];
 
       try {
-        for (const {email, name, registrationNumber} of parsedEntries) {
+        for (const { email, name, registrationNumber } of parsedEntries) {
           const data = await db.email.upsert({
             where: {
               email,

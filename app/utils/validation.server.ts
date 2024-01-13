@@ -19,6 +19,18 @@ const SignInSchema = object({
   ]),
 });
 
+const AddUserSchema = object({
+  email: string("Email is required", [
+    email("Please enter a valid email address"),
+  ]),
+  username: string("Username is required", [
+    minLength(3, "Username is required"),
+  ]),
+  password: string("Password is required", [
+    minLength(3, "Password is required"),
+  ]),
+});
+
 const AddEntrySchema = object({
   email: string("Email is required", [
     email("Please enter a valid email address"),
@@ -63,4 +75,5 @@ const validateForm =
   };
 
 export const validateSignIn = validateForm(SignInSchema);
+export const validateAddUser = validateForm(AddUserSchema);
 export const validateAddEntry = validateForm(AddEntrySchema);

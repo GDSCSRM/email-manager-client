@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { db } from "~/utils/db.server";
-import { requireUserId } from "~/utils/session.server";
+import { isAdmin, requireUserId } from "~/utils/session.server";
 import {
   Download,
   Filter,
@@ -18,7 +18,7 @@ import {
   Settings,
   User,
 } from "lucide-react";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import type { LoaderFunction, MetaFunction } from "@remix-run/node";
 import Section from "~/components/section";
@@ -31,10 +31,8 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import { cn } from "~/lib/utils";
 import { Checkbox } from "~/components/ui/checkbox";
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -48,10 +46,11 @@ type LoaderData = {
   uniEmailsCount: number;
   emailsWithName: number;
   emailsWithRegistrationNumber: number;
+  isAdmin: boolean;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  await requireUserId(request);
+  const isUserAdmin = await isAdmin(request);
 
   const emailsCount = await db.email.count();
   const uniEmailsCount = await db.email.count({
@@ -81,6 +80,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     uniEmailsCount,
     emailsWithName,
     emailsWithRegistrationNumber,
+    isAdmin: isUserAdmin,
   });
 };
 
@@ -90,6 +90,7 @@ export default function Index() {
     uniEmailsCount,
     emailsWithName,
     emailsWithRegistrationNumber,
+    isAdmin,
   } = useLoaderData<LoaderData>();
 
   const [filters, setFilters] = useState({
@@ -171,25 +172,27 @@ export default function Index() {
             </Button>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              Users
-              <User className="text-muted-foreground" />
-            </CardTitle>
-            <CardDescription>Manage Users</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button
-              className="flex items-center gap-2 font-semibold w-fit"
-              asChild
-            >
-              <Link to="/admin">
-                <Settings width={20} height={20} /> Manage
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
+        {isAdmin && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                Users
+                <User className="text-muted-foreground" />
+              </CardTitle>
+              <CardDescription>Manage Users</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                className="flex items-center gap-2 font-semibold w-fit"
+                asChild
+              >
+                <Link to="/admin">
+                  <Settings width={20} height={20} /> Manage
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </Section>
       <Section title="Download">
         <Card>

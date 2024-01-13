@@ -87,9 +87,20 @@ export async function requireUserId(request: Request) {
   const userId = await getUserId(request);
 
   if (!userId) {
-    throw redirect(`/sign-in`);
+    throw redirect("/sign-in");
   }
   return userId;
+}
+
+export async function isAdmin(request: Request) {
+  const userId = await requireUserId(request);
+  const user = await db.user.findUnique({ where: { id: userId } });
+
+  if (!user) {
+    throw redirect("/sign-in");
+  }
+
+  return user.isAdmin;
 }
 
 export async function signOut(request: Request) {
