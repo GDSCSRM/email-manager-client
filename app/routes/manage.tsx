@@ -14,9 +14,16 @@ import { Label } from "~/components/ui/label";
 import { toast } from "~/components/ui/use-toast";
 import { validateAddEntry } from "~/utils/validation.server";
 import { cn } from "~/lib/utils";
-import { json } from "@remix-run/node";
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
-import { useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { json, redirect } from "@remix-run/node";
+import {
+  Form,
+  Link,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
+import { useEffect, useRef } from "react";
 import type { Email } from "@prisma/client";
 import type {
   LoaderFunction,
@@ -32,19 +39,32 @@ export const meta: MetaFunction = () => {
 };
 
 type LoaderData = {
+  page: number;
   emails: Email[];
+  pagesCount: number;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
   await requireUserId(request);
 
+  const url = new URL(request.url);
+  const page = Number(url.searchParams.get("page") ?? 1);
+
+  const pagesCount = Math.ceil((await db.email.count()) / 10);
+
+  if (page < 1 || page > pagesCount) {
+    return redirect("/manage");
+  }
+
   const emails = await db.email.findMany({
     orderBy: {
       createdAt: "desc",
     },
+    skip: (page - 1) * 10,
+    take: 10,
   });
 
-  return json({ emails });
+  return json({ page, emails, pagesCount });
 };
 
 type ActionData = {
@@ -90,8 +110,10 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Manage() {
-  const { emails } = useLoaderData<LoaderData>();
+  const { page, emails, pagesCount } = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
+  const navigation = useNavigation();
+  const addEntryFormRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (actionData?.error) {
@@ -103,6 +125,21 @@ export default function Manage() {
     }
   }, [actionData]);
 
+  useEffect(() => {
+    if (
+      navigation.state === "loading" &&
+      navigation.formData != null &&
+      navigation.formAction === navigation.location.pathname
+    ) {
+      toast({
+        title: "Entry added",
+        description: "New email entry added successfully",
+      });
+    }
+
+    addEntryFormRef.current?.reset();
+  }, [navigation]);
+
   return (
     <main className="flex flex-col gap-7 px-10">
       <Dialog>
@@ -113,7 +150,11 @@ export default function Manage() {
           <DialogHeader>
             <DialogTitle>Add new entry</DialogTitle>
           </DialogHeader>
-          <Form className="flex flex-col gap-3" method="POST">
+          <Form
+            className="flex flex-col gap-3"
+            method="POST"
+            ref={addEntryFormRef}
+          >
             <div className="flex flex-col gap-2">
               <Label>Email</Label>
               <Input name="email" placeholder="Email" />
@@ -182,6 +223,18 @@ export default function Manage() {
         ]}
         data={emails}
       />
+      <div className="flex items-center mx-auto space-x-2 py-4">
+        <Button variant="outline" disabled={page == 1}>
+          <Link to={`?page=${page - 1}`}>
+            <ChevronLeft className="text-primary" />
+          </Link>
+        </Button>
+        <Button variant="outline" disabled={page == pagesCount}>
+          <Link to={`?page=${page + 1}`}>
+            <ChevronRight className="text-primary" />
+          </Link>
+        </Button>
+      </div>
     </main>
   );
 }
