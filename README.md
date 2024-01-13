@@ -1,38 +1,12 @@
-# Welcome to Remix!
+# Email Manager Client
+Manage emails with an easy-to-use client. Bulk add new emails from a CSV file
 
-- [Remix Docs](https://remix.run/docs)
+![image](https://github.com/GDSCSRM/Email-Manager-Client/assets/64266012/cf67e039-9fde-49e5-a158-a13cf37645e8)
 
-## Development
-
-From your terminal:
-
-```sh
-npm run dev
-```
-
-This starts your app in development mode, rebuilding assets on file changes.
-
-## Deployment
-
-First, build your app for production:
-
-```sh
-npm run build
-```
-
-Then run the app in production mode:
-
-```sh
-npm start
-```
-
-Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `remix build`
-
-- `build/`
-- `public/build/`
+## Tech Stack
+- [Remix](https://remix.run/)
+- [shadcn/ui](https://ui.shadcn.com/)
+- [TailwindCSS](https://tailwindcss.com/)
+- [Prisma](https://www.prisma.io/)
+- [MongoDB](https://www.mongodb.com/)
+- [TypeScript](https://www.typescriptlang.org/)
