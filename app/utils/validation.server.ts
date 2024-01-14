@@ -31,6 +31,12 @@ const AddUserSchema = object({
   ]),
 });
 
+const DeleteUserSchema = object({
+  email: string("Email is required", [
+    email("Please enter a valid email address"),
+  ]),
+});
+
 const AddEntrySchema = object({
   email: string("Email is required", [
     email("Please enter a valid email address"),
@@ -76,4 +82,5 @@ const validateForm =
 
 export const validateSignIn = validateForm(SignInSchema);
 export const validateAddUser = validateForm(AddUserSchema);
+export const validateDeleteUser = validateForm(DeleteUserSchema);
 export const validateAddEntry = validateForm(AddEntrySchema);

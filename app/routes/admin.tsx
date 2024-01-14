@@ -13,7 +13,7 @@ import { Input } from "~/components/ui/input";
 import { toast } from "~/components/ui/use-toast";
 import { cn } from "~/lib/utils";
 import { isAdmin, signUp } from "~/utils/session.server";
-import { validateAddUser } from "~/utils/validation.server";
+import { validateAddUser, validateDeleteUser } from "~/utils/validation.server";
 import { db } from "~/utils/db.server";
 import { json, redirect } from "@remix-run/node";
 import {
@@ -29,6 +29,7 @@ import type {
   LoaderFunction,
   MetaFunction,
 } from "@remix-run/node";
+import { Trash } from "lucide-react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -66,23 +67,57 @@ export const action: ActionFunction = async ({ request }) => {
     return redirect("/");
   }
 
-  const formData = await request.formData();
-  const body = Object.fromEntries(formData.entries());
+  switch (request.method) {
+    case "POST": {
+      const formData = await request.formData();
+      const body = Object.fromEntries(formData.entries());
 
-  const parsedRes = validateAddUser(body);
+      const parsedRes = validateAddUser(body);
 
-  if (!parsedRes.success) {
-    return json({ fieldErrors: parsedRes.errors }, { status: 400 });
+      if (!parsedRes.success) {
+        return json({ fieldErrors: parsedRes.errors }, { status: 400 });
+      }
+
+      const { email, password, username } = parsedRes.data;
+      const res = await signUp(email, username, password);
+
+      if (!res.success) {
+        return json({ error: res.error }, { status: 400 });
+      }
+
+      return json({ message: "User added successfully" });
+    }
+
+    case "DELETE": {
+      const formData = await request.formData();
+      const body = Object.fromEntries(formData.entries());
+
+      const parsedRes = validateDeleteUser(body);
+      if (!parsedRes.success) {
+        return json({ fieldErrors: parsedRes.errors }, { status: 400 });
+      }
+
+      const user = await db.user.findUnique({
+        where: {
+          email: parsedRes.data.email,
+        },
+      });
+
+      if (!user) {
+        return json({ error: "User not found" }, { status: 404 });
+      }
+
+      await db.user.delete({
+        where: {
+          id: user.id,
+        },
+      });
+
+      return json({ message: "User deleted successfully" });
+    }
   }
 
-  const { email, password, username } = parsedRes.data;
-  const res = await signUp(email, username, password);
-
-  if (!res.success) {
-    return json({ error: res.error }, { status: 400 });
-  }
-
-  return json({ message: "User added successfully" });
+  return json({ error: "Invalid method" }, { status: 400 });
 };
 
 export default function Admin() {
@@ -185,9 +220,43 @@ export default function Admin() {
             ),
           },
           { accessorKey: "username", header: "Username" },
+          {
+            accessorKey: "delete",
+            header: "delete",
+            cell: ({ row }) => <DeleteUser email={row.getValue("email")} />,
+          },
         ]}
         data={users}
       />
     </main>
   );
 }
+
+const DeleteUser = ({ email }: { email: string }) => {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Trash
+          className="hover:text-destructive cursor-pointer"
+          width={20}
+          height={20}
+        />
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Are you sure?</DialogTitle>
+        </DialogHeader>
+        <p className="text-sm">
+          Are you sure you want to delete this user? This action cannot be
+          undone.
+        </p>
+        <Form method="DELETE" className="flex justify-end">
+          <input hidden readOnly name="email" value={email} />
+          <Button type="submit" className="font-semibold w-fit self-end">
+            Yes
+          </Button>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+};
